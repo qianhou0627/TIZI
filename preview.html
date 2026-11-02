@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouYu 实时预览</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #f8f6fc;
+        color: #29243b;
+        font:
+          16px/1.6 'Microsoft YaHei',
+          sans-serif;
+      }
+      main {
+        width: min(100%, 520px);
+        padding: 40px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 12px 40px #35235312;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+      p {
+        margin: 0 0 18px;
+      }
+      a {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: #6752a5;
+        color: #fff;
+        text-decoration: none;
+      }
+      a:hover {
+        background: #513d8b;
+      }
+      a:focus-visible {
+        outline: 3px solid #a694db;
+        outline-offset: 3px;
+      }
+      .help {
+        margin: 24px 0 0;
+        color: #514b60;
+      }
+      @media (max-width: 480px) {
+        main {
+          padding: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>YouYu 实时预览</h1>
+      <p id="status" role="status">正在连接本地预览…</p>
+      <a href="http://127.0.0.1:5173/">进入预览</a>
+      <p class="help">
+        如果无法进入，请先双击项目文件夹里的“start-preview.cmd”，并保持打开的窗口运行。保存界面代码后，预览会自动更新。
+      </p>
+    </main>
+    <script>
+      function check() {
+        const image = new Image();
+        image.onload = () => {
+          location.href = 'http://127.0.0.1:5173/';
+        };
+        image.onerror = () => {
+          document.getElementById('status').textContent = '等待预览启动';
+          setTimeout(check, 2000);
+        };
+        image.src = 'http://127.0.0.1:5173/src/renderer/assets/youyu-icon.png?check=' + Date.now();
+      }
+      check();
+    </script>
+  </body>
+</html>

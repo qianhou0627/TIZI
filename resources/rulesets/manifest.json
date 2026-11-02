@@ -1,0 +1,125 @@
+{
+  "updatedAt": "2026-10-31T01:05:28.076Z",
+  "files": [
+    {
+      "file": "Claude.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Claude/Claude.yaml",
+      "sha256": "ef21df39005b17dbd84aa65a47162b36fb5e72754cd32384146474ed488df482",
+      "bytes": 265
+    },
+    {
+      "file": "Discord.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Discord/Discord.yaml",
+      "sha256": "ce5e3cf18e7353fea35edce91f66e1dfa2a38331203b7fb245c535620d02bf8b",
+      "bytes": 1201
+    },
+    {
+      "file": "Gemini.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml",
+      "sha256": "d76e9822f72a69860b7d3086db61bbbef53014c57e3dc12472150c62a4f6434b",
+      "bytes": 666
+    },
+    {
+      "file": "GitHub.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitHub/GitHub.yaml",
+      "sha256": "a2641ce2f10857831b600623f97d354e6f8db7b20dff175c5313c2c46e0b6867",
+      "bytes": 1250
+    },
+    {
+      "file": "Google.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml",
+      "sha256": "dfb4bf0a0095e48f024fbb7c31564a928e6c7d450b662aca9803119489a9237c",
+      "bytes": 22654
+    },
+    {
+      "file": "LICENSE-blackmatrix7-GPL-2.0.txt",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/LICENSE",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "bytes": 18092
+    },
+    {
+      "file": "LICENSE-MetaCubeX-GPL-3.0.txt",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/master/LICENSE",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "bytes": 35149
+    },
+    {
+      "file": "MetaChina.mrs",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs",
+      "sha256": "0b8c7c4d9773471991dd65737fdb16f3bf1baf2512c8b764d4c235318f01b7c6",
+      "bytes": 532882
+    },
+    {
+      "file": "MetaChina.source.list",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.list",
+      "sha256": "703c706f925afa756a404136ce2cbea856763969d241280ce55345519dc9332f",
+      "bytes": 1613591
+    },
+    {
+      "file": "MetaChinaIP.mrs",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs",
+      "sha256": "1cd97d734afafcac0708895cefa931ed19aeac28933458afdc4f9c13e915fcb5",
+      "bytes": 38572
+    },
+    {
+      "file": "MetaChinaIP.source.list",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.list",
+      "sha256": "60724e81961079926c603952eb5d3557face7c27203b85f362c99a7728b11332",
+      "bytes": 159311
+    },
+    {
+      "file": "MetaGlobal.mrs",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs",
+      "sha256": "a322b7593e26ddf9178f93eba549ab4425687418b797c28538766c2e3d14de1f",
+      "bytes": 198821
+    },
+    {
+      "file": "MetaGlobal.source.list",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.list",
+      "sha256": "71da46c558655c46b41f116cdf9af513613228ada32b2e2f1c111c02cb253201",
+      "bytes": 457825
+    },
+    {
+      "file": "MetaPrivate.mrs",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs",
+      "sha256": "df452ab1bfb572f366f00001fa4525f16f137dc670aed2c60af0100dc397d3ec",
+      "bytes": 781
+    },
+    {
+      "file": "MetaPrivate.source.list",
+      "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.list",
+      "sha256": "db9b2da8d7e90f09e183dcde096f72adaacd8de21e0f09d364b413085ecb7b57",
+      "bytes": 2741
+    },
+    {
+      "file": "Netflix.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml",
+      "sha256": "cfb49b76fabc96887c7da7336ecea9066727c1489d25d677baa4f4e7a79a05f3",
+      "bytes": 1607
+    },
+    {
+      "file": "OpenAI.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml",
+      "sha256": "cf66c50e7cfbe0aa0e9e249bfa8897d152ae35b38ab6db2936ef62860b7b61b4",
+      "bytes": 1469
+    },
+    {
+      "file": "Steam.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Steam/Steam.yaml",
+      "sha256": "5b5096fafff8bc3c77560590d095ebfccefe708d47ea04fc36d1b052a7e4dd5f",
+      "bytes": 2724
+    },
+    {
+      "file": "Telegram.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml",
+      "sha256": "e78efc3f18069f1f1e3f88c15cd55f85424367b58ce8474af08c2fdf054704e0",
+      "bytes": 1590
+    },
+    {
+      "file": "YouTube.yaml",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml",
+      "sha256": "2f84cc9d35c8559ebea4c43aa9b30bb43b36313d70684f23a359f1acabb879bb",
+      "bytes": 5935
+    }
+  ]
+}

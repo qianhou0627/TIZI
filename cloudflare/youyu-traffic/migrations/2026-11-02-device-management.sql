@@ -1,0 +1,1 @@
+-- Columns are added idempotently by migrations/apply.mjs.

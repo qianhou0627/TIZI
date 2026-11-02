@@ -1,0 +1,75 @@
+import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
+import type { DesktopPetState } from '../../shared/ipc';
+import { getPetAnimation } from '../pet/atlas';
+
+type PetSpriteProps = {
+  state: DesktopPetState;
+  scale?: number;
+  animated?: boolean;
+  className?: string;
+};
+
+export function PetSprite({ state, scale = 0.78, animated = true, className = '' }: PetSpriteProps) {
+  const animation = getPetAnimation(state);
+  const [frame, setFrame] = useState(0);
+  const showsSideSleepZs = state === 'edgeLeftSleep' || state === 'edgeRightSleep';
+
+  useEffect(() => {
+    let timer: number | undefined;
+    let currentFrame = 0;
+    setFrame(0);
+
+    if (!animated || animation.frames <= 1) return undefined;
+
+    const step = () => {
+      currentFrame += 1;
+      if (currentFrame >= animation.frames) {
+        if (!animation.loop) return;
+        currentFrame = 0;
+      }
+      setFrame(currentFrame);
+      timer = window.setTimeout(step, 1000 / animation.fps);
+    };
+
+    timer = window.setTimeout(step, 1000 / animation.fps);
+
+    return () => {
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [state, animated, animation.frames, animation.fps, animation.loop]);
+
+  const frameIndex = animation.frameIndexes[Math.min(frame, animation.frameIndexes.length - 1)] ?? 0;
+  const style = {
+    '--pet-scale': `${scale}`,
+    '--pet-width': `${animation.frameWidth * scale}px`,
+    '--pet-height': `${animation.frameHeight * scale}px`,
+    '--pet-atlas-width': `${animation.frameWidth * animation.atlasColumns * scale}px`,
+    '--pet-atlas-height': `${animation.frameHeight * animation.atlasRows * scale}px`,
+    '--pet-frame-x': `${frameIndex * animation.frameWidth * scale * -1}px`,
+    '--pet-row-y': `${animation.row * animation.frameHeight * scale * -1}px`,
+    backgroundImage: `url(${animation.imageUrl})`
+  } as CSSProperties & Record<string, string | number>;
+
+  const classNames = ['pet-sprite', `pet-sprite-${state}`, animated ? '' : 'pet-sprite-static', className]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <span className={classNames} style={style} aria-hidden="true">
+      {showsSideSleepZs ? (
+        <span className="pet-side-sleep-zs">
+          <span className="pet-side-sleep-z">
+            <span className="pet-side-sleep-z-glyph">Z</span>
+          </span>
+          <span className="pet-side-sleep-z">
+            <span className="pet-side-sleep-z-glyph">Z</span>
+          </span>
+          <span className="pet-side-sleep-z">
+            <span className="pet-side-sleep-z-glyph">Z</span>
+          </span>
+        </span>
+      ) : null}
+    </span>
+  );
+}

@@ -1,0 +1,17 @@
+name = "qianhou-tizi"
+main = "src/index.ts"
+compatibility_date = "2026-05-01"
+workers_dev = true
+preview_urls = false
+
+[[routes]]
+pattern = "qianhou-tizi.52052099.xyz"
+custom_domain = true
+
+[triggers]
+crons = ["17 */6 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "youyu_traffic"
+database_id = "2a30f77e-4c01-46e0-94af-12db49d9e04c"

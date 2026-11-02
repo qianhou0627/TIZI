@@ -1,0 +1,71 @@
+:host {
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif;
+  color: #21182e;
+  --accent-strong: #7441bd;
+  --font-weight-bold: 700;
+}
+* {
+  box-sizing: border-box;
+}
+.pet-browser-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 184px;
+  height: 194px;
+  pointer-events: none;
+}
+.pet-root {
+  width: 184px;
+  height: 194px;
+  pointer-events: none;
+  overflow: visible;
+}
+.pet-hit-target {
+  pointer-events: auto;
+  cursor: grab;
+}
+.pet-hit-target:active {
+  cursor: grabbing;
+}
+.pet-sprite {
+  will-change: auto;
+}
+.pet-menu {
+  position: absolute;
+  bottom: 100%;
+  width: 152px;
+  padding: 6px;
+  border-radius: 10px;
+  background: #fdfcff;
+  box-shadow: 0 4px 24px #21182e24;
+  pointer-events: auto;
+}
+.pet-menu button {
+  font: inherit;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #572b99;
+  cursor: pointer;
+}
+.pet-menu button:hover {
+  background: #eee7f7;
+}
+.pet-menu button:focus-visible {
+  outline: 2px solid #7441bd;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-sprite {
+    background-position: 0 var(--pet-row-y) !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,73 @@
+appId: studio.youyu.proxy
+productName: YouYu
+compression: normal
+afterPack: scripts/electron-builder-after-pack.mjs
+publish:
+  provider: github
+  owner: qianhou0627
+  repo: TIZI
+electronLanguages:
+  - zh-CN
+  - en-US
+directories:
+  output: release
+files:
+  - out/main/**
+  - out/preload/**
+  - out/renderer/**
+  - package.json
+  - '!**/*.map'
+  - '!**/node_modules/.cache/**'
+  - '!**/release/**'
+extraResources:
+  - from: resources/rulesets
+    to: rulesets
+  - from: LICENSE
+    to: LICENSE.youyu.txt
+  - from: THIRD-PARTY-NOTICES.txt
+    to: THIRD-PARTY-NOTICES.txt
+  - from: resources/mihomo
+    to: mihomo
+    filter:
+      - win-x64/mihomo.exe
+      - win-x64/manifest.json
+      - win-x64/LICENSE-GPL-3.0.txt
+      - win-x64/SOURCE.md
+  - from: resources/generated/default-subscription.txt
+    to: default-subscription.txt
+  - from: resources/generated/windows-fullscreen-probe.exe
+    to: windows-fullscreen-probe.exe
+  - from: resources/traffic-api-url.txt
+    to: traffic-api-url.txt
+  - from: build/icon.png
+    to: assets/icon.png
+  - from: build/tray-icon.png
+    to: assets/tray-icon.png
+  - from: build/update-elevated-installer.ps1
+    to: update-elevated-installer.ps1
+win:
+  icon: build/icon.ico
+  requestedExecutionLevel: asInvoker
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: YouYu-${version}-${arch}.${ext}
+  signtoolOptions:
+    timeStampServer: http://timestamp.digicert.com
+    rfc3161TimeStampServer: http://timestamp.digicert.com
+nsis:
+  oneClick: false
+  perMachine: true
+  packElevateHelper: true
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: TIZI
+  uninstallDisplayName: TIZI ${version}
+  language: '2052'
+  installerLanguages:
+    - zh_CN
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  include: build/installer.nsh

@@ -1,0 +1,12 @@
+@import './styles/tokens.css';
+@import './styles/shell.css';
+@import './styles/home.css';
+@import './styles/pet.css';
+@import './styles/dashboard.css';
+@import './styles/settings.css';
+@import './styles/user-notice.css';
+@import './styles/test.css';
+@import './styles/responsive.css';
+
+@import './styles/routing.css';
+@import './styles/theme.css';

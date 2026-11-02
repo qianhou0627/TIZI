@@ -1,0 +1,220 @@
+import { access, readFile, readdir, stat } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { createReadStream } from 'node:fs';
+import { join } from 'node:path';
+import { listPackage } from '@electron/asar';
+import { parse } from 'yaml';
+import { resolveBuildMode } from './build-mode.mjs';
+import {
+  assertPackagedMihomoMatchesSource,
+  mihomoResourceRelativePath,
+  validateMihomoDistribution
+} from './mihomo-distribution.mjs';
+import { inspectAuthenticodeTargets, validateAuthenticodeRecords } from './windows-signing.mjs';
+
+const root = process.cwd();
+const releaseDir = join(root, 'release');
+const { internalBuild, noPetBuild, publicUpdateBuild } = resolveBuildMode(process.argv.slice(2));
+const bundledSubscriptionBuild = (internalBuild || noPetBuild) && !publicUpdateBuild;
+
+const packageJson = (await import('../package.json', { with: { type: 'json' } })).default as {
+  version?: string;
+};
+
+if (!packageJson.version) {
+  throw new Error('Missing package version');
+}
+
+const expectedInstallerName = `YouYu-${packageJson.version}-x64${internalBuild ? '-in' : noPetBuild ? '-no' : ''}.exe`;
+const expectedInstallerPath = join(releaseDir, expectedInstallerName);
+const expectedBlockmapPath = join(releaseDir, `${expectedInstallerName}.blockmap`);
+const expectedUpdateMetadataName = internalBuild ? 'latest-in.yml' : noPetBuild ? 'latest-no.yml' : 'latest.yml';
+const expectedUpdateMetadataPath = join(releaseDir, expectedUpdateMetadataName);
+const bundledSubscriptionPath = join(releaseDir, 'win-unpacked', 'resources', 'default-subscription.txt');
+const fullscreenProbePath = join(releaseDir, 'win-unpacked', 'resources', 'windows-fullscreen-probe.exe');
+const trafficApiUrlPath = join(releaseDir, 'win-unpacked', 'resources', 'traffic-api-url.txt');
+const elevatedUpdateWrapperPath = join(releaseDir, 'win-unpacked', 'resources', 'update-elevated-installer.ps1');
+const packagedMihomoPath = join(releaseDir, 'win-unpacked', 'resources', 'mihomo', 'win-x64');
+const electronDefaultAppPath = join(releaseDir, 'win-unpacked', 'resources', 'default_app.asar');
+const electronVersionMarkerPath = join(releaseDir, 'win-unpacked', 'version');
+const packagedAppAsarPath = join(releaseDir, 'win-unpacked', 'resources', 'app.asar');
+
+await access(expectedInstallerPath);
+await access(expectedBlockmapPath);
+await access(expectedUpdateMetadataPath);
+const ruleManifest = JSON.parse(await readFile(join(root, 'resources/rulesets/manifest.json'), 'utf8')) as {
+  files: Array<{ file: string; sha256: string; bytes: number }>;
+};
+for (const entry of ruleManifest.files) {
+  const payload = await readFile(join(releaseDir, 'win-unpacked/resources/rulesets', entry.file));
+  if (payload.length !== entry.bytes || createHash('sha256').update(payload).digest('hex') !== entry.sha256)
+    throw new Error(`Packaged ruleset mismatch: ${entry.file}`);
+}
+for (const [source, packaged] of [
+  ['LICENSE', 'LICENSE.youyu.txt'],
+  ['THIRD-PARTY-NOTICES.txt', 'THIRD-PARTY-NOTICES.txt']
+]) {
+  const original = await readFile(join(root, source));
+  const copy = await readFile(join(releaseDir, 'win-unpacked', 'resources', packaged));
+  if (!original.equals(copy)) throw new Error(`Packaged license notice does not match ${source}`);
+}
+await access(join(releaseDir, 'win-unpacked', 'LICENSE.electron.txt'));
+await access(join(releaseDir, 'win-unpacked', 'LICENSES.chromium.html'));
+await assertPathMissing(electronDefaultAppPath, 'Packaged app must not retain Electron default_app.asar');
+await assertPathMissing(electronVersionMarkerPath, 'Packaged app must not retain Electron version marker');
+
+const unexpectedPackagedOutput = listPackage(packagedAppAsarPath, { isPack: false }).filter((entry) => {
+  const normalized = entry.replaceAll('/', '\\').toLowerCase();
+  if (!normalized.startsWith('\\out\\')) return false;
+  return !['\\out\\main', '\\out\\preload', '\\out\\renderer'].some(
+    (allowed) => normalized === allowed || normalized.startsWith(`${allowed}\\`)
+  );
+});
+if (unexpectedPackagedOutput.length > 0) {
+  throw new Error(
+    `Packaged app contains non-desktop build output: ${unexpectedPackagedOutput.slice(0, 10).join(', ')}`
+  );
+}
+
+const sourceElevatedUpdateWrapper = await readFile(join(root, 'build', 'update-elevated-installer.ps1'));
+const packagedElevatedUpdateWrapper = await readFile(elevatedUpdateWrapperPath);
+if (!sourceElevatedUpdateWrapper.equals(packagedElevatedUpdateWrapper)) {
+  throw new Error('Packaged elevated update wrapper does not match the reviewed source');
+}
+
+const sourceMihomo = await validateMihomoDistribution(join(root, mihomoResourceRelativePath));
+const packagedMihomo = await validateMihomoDistribution(packagedMihomoPath);
+const mihomoPackaging = assertPackagedMihomoMatchesSource(sourceMihomo.manifest, packagedMihomo.manifest);
+if (mihomoPackaging.signed) {
+  const records = inspectAuthenticodeTargets([{ role: 'mihomo-core', path: packagedMihomo.binaryPath }]);
+  validateAuthenticodeRecords(records, { expectedPublisher: mihomoPackaging.signerSubject });
+  if (records[0].thumbprint?.toUpperCase() !== mihomoPackaging.signerThumbprint) {
+    throw new Error('Packaged Mihomo Authenticode thumbprint does not match its provenance envelope');
+  }
+}
+
+const updateMetadata = parse(await readFile(expectedUpdateMetadataPath, 'utf8')) as {
+  version?: unknown;
+  path?: unknown;
+  sha512?: unknown;
+  files?: Array<{ url?: unknown; sha512?: unknown; isAdminRightsRequired?: unknown }>;
+};
+if (updateMetadata.version !== packageJson.version) {
+  throw new Error(`${expectedUpdateMetadataName} has unexpected version: ${String(updateMetadata.version)}`);
+}
+if (updateMetadata.path !== expectedInstallerName) {
+  throw new Error(`${expectedUpdateMetadataName} points to unexpected installer: ${String(updateMetadata.path)}`);
+}
+const metadataFile = updateMetadata.files?.find((entry) => entry.url === expectedInstallerName);
+if (!metadataFile || typeof metadataFile.sha512 !== 'string' || typeof updateMetadata.sha512 !== 'string') {
+  throw new Error(`${expectedUpdateMetadataName} is missing installer checksums`);
+}
+// Legacy clients (including 1.7.0) still use electron-updater's NSIS route.
+// Make its UAC elevation deterministic; the new installer then recovers the
+// SID/session-bound handoff without depending on UAC environment inheritance.
+// New clients do not call quitAndInstall and use the explicit CLI bridge instead.
+if (metadataFile.isAdminRightsRequired !== true) {
+  throw new Error(`${expectedUpdateMetadataName} must require elevation for the legacy NSIS update route`);
+}
+const installerSha512 = await hashFileSha512(expectedInstallerPath);
+if (metadataFile.sha512 !== installerSha512 || updateMetadata.sha512 !== installerSha512) {
+  throw new Error(`${expectedUpdateMetadataName} installer checksum does not match ${expectedInstallerName}`);
+}
+
+const entries = await readdir(releaseDir, { withFileTypes: true });
+const exeEntries = entries
+  .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.exe'))
+  .map((entry) => entry.name);
+
+if (exeEntries.length !== 1 || exeEntries[0] !== expectedInstallerName) {
+  throw new Error(
+    `Expected exactly one installer exe (${expectedInstallerName}), found: ${exeEntries.join(', ') || '<none>'}`
+  );
+}
+
+if (!internalBuild && exeEntries.some((entry) => /-in\.exe$/i.test(entry))) {
+  throw new Error(`Public release must not contain internal installer: ${exeEntries.join(', ')}`);
+}
+if (!noPetBuild && exeEntries.some((entry) => /-no\.exe$/i.test(entry))) {
+  throw new Error(`Standard release must not contain no-pet installer: ${exeEntries.join(', ')}`);
+}
+const confusingEntries = entries.filter((entry) => /arm64|ia32/i.test(entry.name)).map((entry) => entry.name);
+
+if (confusingEntries.length > 0) {
+  throw new Error(`Unexpected non-x64 Windows release entries: ${confusingEntries.join(', ')}`);
+}
+
+const currentInstaller = await stat(expectedInstallerPath);
+if (currentInstaller.size < 80 * 1024 * 1024) {
+  throw new Error(`Installer is unexpectedly small: ${expectedInstallerName}`);
+}
+
+const fullscreenProbe = await stat(fullscreenProbePath);
+if (fullscreenProbe.size < 1024 || fullscreenProbe.size > 1024 * 1024) {
+  throw new Error(`Windows fullscreen probe has an unexpected size: ${fullscreenProbe.size}`);
+}
+const fullscreenProbeResult = spawnSync(fullscreenProbePath, ['0', String(process.pid), '250', '1'], {
+  encoding: 'utf8',
+  windowsHide: true,
+  timeout: 10_000
+});
+if (fullscreenProbeResult.status !== 0 || fullscreenProbeResult.stdout.trim() !== '0') {
+  throw new Error(
+    `Windows fullscreen probe failed to execute: ${fullscreenProbeResult.stderr.trim() || fullscreenProbeResult.error?.message || `exit ${fullscreenProbeResult.status}`}`
+  );
+}
+
+const bundledSubscriptionBytes = await readFile(bundledSubscriptionPath);
+const bundledSubscription = bundledSubscriptionBytes.toString('utf8').trim();
+if (!bundledSubscriptionBuild && bundledSubscription) {
+  throw new Error('Public installer must not bundle a default subscription');
+}
+if (bundledSubscriptionBuild && !bundledSubscription) {
+  throw new Error(`${internalBuild ? 'Internal' : 'No-pet'} installer is missing the bundled default subscription`);
+}
+if (bundledSubscriptionBuild) {
+  const privateSubscriptionBytes = await readFile(join(root, 'resources', 'default-subscription.in.txt'));
+  if (!bundledSubscriptionBytes.equals(privateSubscriptionBytes)) {
+    throw new Error(
+      `${internalBuild ? 'Internal' : 'No-pet'} installer subscription does not match resources/default-subscription.in.txt`
+    );
+  }
+}
+if (publicUpdateBuild && bundledSubscription) {
+  throw new Error('Public update installer must not bundle a default subscription');
+}
+
+const trafficApiUrl = (await readFile(trafficApiUrlPath, 'utf8')).trim();
+if (!/^https:\/\/\S+$/i.test(trafficApiUrl)) {
+  throw new Error('Windows installer is missing a valid traffic API URL');
+}
+if (trafficApiUrl !== 'https://qianhou-tizi.52052099.xyz') {
+  throw new Error('Windows installer must use the production traffic API Custom Domain');
+}
+
+if (noPetBuild) {
+  const rendererAssets = await readdir(join(root, 'out', 'renderer', 'assets'));
+  const petAssets = rendererAssets.filter((entry) => /spritesheet/i.test(entry));
+  if (petAssets.length > 0) {
+    throw new Error(`No-pet build must not include pet spritesheets: ${petAssets.join(', ')}`);
+  }
+}
+
+console.log(`validated Windows x64 installer: ${expectedInstallerName}`);
+
+async function assertPathMissing(path: string, message: string): Promise<void> {
+  try {
+    await access(path);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') return;
+    throw error;
+  }
+  throw new Error(message);
+}
+
+async function hashFileSha512(path: string): Promise<string> {
+  const hash = createHash('sha512');
+  for await (const chunk of createReadStream(path)) hash.update(chunk as Buffer);
+  return hash.digest('base64');
+}

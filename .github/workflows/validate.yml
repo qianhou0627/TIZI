@@ -1,0 +1,111 @@
+name: Validate
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Validate repository hygiene
+        run: npm run validate:repo
+
+      - name: Install
+        run: npm ci
+
+      - name: Validate bundled Mihomo
+        run: npm run validate:mihomo
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Verify real Electron startup layout
+        run: npm run test:window
+
+      - name: Test
+        # Avoid a PowerShell 7 module path while retaining the runner's prewarmed PS5 analysis cache.
+        # Run real PS5 process-boundary files separately so cold startup and native compilation
+        # do not compete with the coverage suite or each other on a fresh runner.
+        shell: cmd
+        run: |
+          if not defined PSModuleAnalysisCachePath (
+            echo ERROR: GitHub runner PS5 analysis cache is unavailable.
+            exit /b 1
+          )
+          if /I "%PSModuleAnalysisCachePath%"=="NUL" (
+            echo ERROR: GitHub runner PS5 analysis cache is disabled.
+            exit /b 1
+          )
+          if not exist "%PSModuleAnalysisCachePath%" (
+            echo ERROR: GitHub runner PS5 analysis cache file does not exist.
+            exit /b 1
+          )
+          set "PSModulePath="
+          node node_modules\vitest\vitest.mjs run --coverage --exclude tests/main/updateInstallerLauncher.test.ts --exclude tests/main/manageInstalledProcessScript.test.ts --exclude tests/main/elevatedProcess.test.ts --exclude tests/main/windowsPowerShell.test.ts --exclude tests/main/windowsJobProcess.test.ts --exclude tests/main/cleanupStartupTasksScript.test.ts --exclude tests/main/restoreOwnedProxyScript.test.ts --exclude tests/main/windowsFullscreenProbe.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/restoreOwnedProxyScript.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/windowsFullscreenProbe.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/windowsPowerShell.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/windowsJobProcess.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/cleanupStartupTasksScript.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/elevatedProcess.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/manageInstalledProcessScript.test.ts
+          if errorlevel 1 exit /b 1
+          node node_modules\vitest\vitest.mjs run tests/main/updateInstallerLauncher.test.ts
+          if errorlevel 1 exit /b 1
+
+      - name: Upload critical-domain coverage
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: critical-domain-coverage-${{ github.sha }}
+          path: coverage/critical
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Test Worker maintenance
+        run: npm run test:worker
+
+      - name: Typecheck Worker
+        run: npm run typecheck:worker
+
+      - name: Build Worker
+        run: npm run build:worker
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Check formatting
+        run: npm run format:check --if-present
+
+      - name: Build
+        run: npm run build

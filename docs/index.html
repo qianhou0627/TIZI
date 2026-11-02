@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouYu - Windows Mihomo 桌面客户端</title>
+    <meta
+      name="description"
+      content="YouYu 是 Windows x64 上的 Mihomo 桌面客户端。一键启停代理，管理节点、连通性测试与网络修复，可选标准版和无桌宠版。"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#f7f4fb" />
+    <link rel="canonical" href="https://qianhou0627.github.io/TIZI/" />
+    <link rel="icon" type="image/png" href="assets/youyu-icon.png" />
+    <link rel="apple-touch-icon" href="assets/youyu-icon.png" />
+    <link rel="stylesheet" href="assets/site.css?v=fff8d92660" />
+    <link rel="preload" as="image" href="screenshots/home-advanced.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="YouYu" />
+    <meta property="og:title" content="YouYu - Windows Mihomo 桌面客户端" />
+    <meta
+      property="og:description"
+      content="一键启停代理，需要时看清节点、流量与连通性。下载 Windows x64 标准版或无桌宠版。"
+    />
+    <meta property="og:url" content="https://qianhou0627.github.io/TIZI/" />
+    <meta property="og:image" content="https://qianhou0627.github.io/TIZI/assets/social-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="YouYu：日常一键启停，专业全面掌控" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://qianhou0627.github.io/TIZI/assets/social-cover.png" />
+    <meta name="twitter:image:alt" content="YouYu Windows Mihomo 桌面客户端与真实专业模式界面" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "YouYu",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows 10 / 11 x64",
+        "softwareVersion": "1.8.12",
+        "description": "面向 Windows x64 的 Mihomo 桌面客户端，支持代理管理、节点测速、TUN、网络修复、自动更新和桌宠。",
+        "url": "https://qianhou0627.github.io/TIZI/",
+        "downloadUrl": "https://github.com/qianhou0627/TIZI/releases/latest",
+        "codeRepository": "https://github.com/qianhou0627/TIZI",
+        "license": "https://github.com/qianhou0627/TIZI/blob/main/LICENSE",
+        "isAccessibleForFree": true,
+        "author": { "@type": "Organization", "name": "118 Studio" }
+      }
+    </script>
+    <script src="assets/site.js?v=70fa06c827" defer></script>
+    <script type="module" src="assets/showcase.js?v=a22ed7b2ed"></script>
+    <script src="assets/pages.js?v=cbc8e2c0b9" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#top">跳到正文</a>
+    <div class="header-shell">
+      <header class="site-header page-width">
+        <a class="brand" href="index.html" aria-label="YouYu 首页">
+          <img src="assets/youyu-icon.png" width="40" height="40" alt="" />
+          <span>YouYu</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>菜单</button>
+        <nav id="site-nav" aria-label="页面导航">
+          <a href="index.html#features">产品体验</a>
+          <a href="guide.html">使用指南</a>
+          <a class="nav-updates" href="changelog.html">更新记录</a>
+          <a class="nav-source" href="https://github.com/qianhou0627/TIZI">源码</a>
+          <a class="nav-download" href="download.html">下载</a>
+        </nav>
+      </header>
+    </div>
+
+    <main id="top">
+      <section class="hero page-width" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title" data-reveal="title">日常一键连接<br /><span>需要时，细致调整</span></h1>
+          <p class="hero-summary" data-reveal="rise">
+            YouYu 是 Windows 上的 Mihomo 桌面客户端。小白模式轻松启停，专业模式管理节点、规则、TUN、流量和连通性。
+          </p>
+          <div class="hero-actions" data-reveal="rise">
+            <a class="button" href="https://github.com/qianhou0627/TIZI/releases/download/v1.8.12/YouYu-1.8.12-x64.exe"
+              >下载标准版</a
+            >
+            <a
+              class="button button-secondary"
+              href="https://github.com/qianhou0627/TIZI/releases/download/v1.8.12/YouYu-1.8.12-x64-no.exe"
+              >无桌宠版</a
+            >
+          </div>
+          <p class="release-note" data-reveal="rise">
+            v<span data-release-version>1.8.12</span> · Windows 10 / 11 x64 · MIT 开源
+          </p>
+          <p class="subscription-note">公开安装包不内置订阅，请使用自己的订阅。</p>
+        </div>
+        <figure class="hero-preview" data-pet-src="demo/assets/pet-DjHIawON.js">
+          <div class="preview-toolbar" hidden>
+            <div class="mode-switch" role="group" aria-label="切换界面预览" data-active-mode="advanced">
+              <button type="button" data-mode="easy" aria-pressed="false">小白模式</button>
+              <button type="button" data-mode="advanced" aria-pressed="true">专业模式</button>
+            </div>
+            <a class="preview-link" href="#features">交互体验 <span aria-hidden="true">↗</span></a>
+          </div>
+          <div id="hero-preview-stage" class="preview-stage">
+            <img
+              id="hero-image"
+              src="screenshots/home-advanced.png"
+              width="900"
+              height="600"
+              fetchpriority="high"
+              alt="YouYu 专业模式，显示当前节点、健康状态、流量和诊断"
+              data-reveal="picture"
+            />
+          </div>
+          <figcaption id="preview-caption" aria-live="polite" aria-atomic="true">
+            专业模式：选择节点，查看流量和连接状态。
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section page-width" id="features" aria-labelledby="features-title">
+        <div class="section-heading">
+          <h2 id="features-title" data-reveal="rise">先用起来，再按需要调整</h2>
+          <p data-reveal="rise">从日常启停，到节点、测试和设置，试试 YouYu 的实际操作。</p>
+        </div>
+        <div class="product-tour" data-reveal="picture">
+          <div class="tour-window">
+            <div class="tour-windowbar">
+              <span
+                ><img src="assets/youyu-icon.png" width="22" height="22" alt="" />YouYu
+                <span class="tour-label">交互体验</span></span
+              >
+              <div>
+                <button
+                  class="text-action"
+                  id="demo-start"
+                  data-demo-src="demo/index.html?v=f24ae43f8a"
+                  type="button"
+                  hidden
+                >
+                  重试
+                </button>
+                <span class="tour-load-status" id="demo-status" role="status" hidden>正在加载</span>
+                <span class="tour-mobile-hint">左右滑动</span>
+              </div>
+            </div>
+            <div class="tour-viewport">
+              <div id="demo-stage" class="tour-stage">
+                <img
+                  id="tour-image"
+                  src="screenshots/home-easy.png"
+                  width="900"
+                  height="600"
+                  loading="lazy"
+                  alt="YouYu 小白模式，中央按钮启停代理"
+                />
+              </div>
+            </div>
+            <div class="tour-footnote">使用示例数据，不会修改系统网络。</div>
+          </div>
+          <aside class="tour-guide" aria-label="功能导览">
+            <div class="tour-scenes" role="group" aria-label="选择体验场景" hidden>
+              <button type="button" data-scene="easy" aria-pressed="true">日常连接</button>
+              <button type="button" data-scene="advanced" aria-pressed="false">专业控制</button>
+              <button type="button" data-scene="nodes" aria-pressed="false">选择节点</button>
+              <button type="button" data-scene="test" aria-pressed="false">检查连接</button>
+              <button type="button" data-scene="settings" aria-pressed="false">按需设置</button>
+            </div>
+            <div class="tour-description" aria-live="polite" aria-atomic="true">
+              <h3 id="tour-title">日常，只需一个按钮</h3>
+              <p id="tour-description">打开后连接，用完后停止。小白模式把日常需要的操作留在首页。</p>
+              <p class="tour-prompt" id="tour-prompt">点击中央按钮，体验连接和停止。</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section pet-section page-width" id="companion" aria-labelledby="pet-title">
+        <figure class="pet-showcase">
+          <figcaption data-reveal="rise">
+            <h2 id="pet-title">桌面上，多一个小伙伴</h2>
+            <p>唤出后，单击挥手，双击跳跃。<br />拖动时跟随方向，贴边探头或休息。</p>
+            <p>它用动作回应连接状态。<br />想让桌面清静些，也可以选无桌宠版。</p>
+            <button class="text-action" type="button" data-release-pet hidden>请它出来</button>
+            <p class="pet-instructions">双击或长按桌宠也可唤出，拖动移动，Esc 收回。</p>
+            <p class="pet-status" role="status" hidden></p>
+          </figcaption>
+          <div
+            class="pet-stage"
+            data-sprite-src="demo/assets/main-spritesheet-BsdxAAmx.webp"
+            data-reveal="picture"
+            aria-label="桌宠动作演示"
+          >
+            <div class="pet-desktop-window" aria-hidden="true">
+              <img src="screenshots/home-advanced.png" width="900" height="600" loading="lazy" alt="" />
+            </div>
+            <button class="pet-character" type="button" aria-label="YouYu 桌宠：单击挥手，双击或长按唤出" disabled>
+              <span class="pet-sprite" aria-hidden="true"
+                ><img class="pet-poster" src="assets/youyu-icon.png" width="160" height="160" alt="" loading="lazy"
+              /></span>
+            </button>
+            <div class="pet-controls" role="group" aria-label="预览桌宠动作" hidden>
+              <button type="button" data-pet-action="wave">挥手</button>
+              <button type="button" data-pet-action="walk">走走</button>
+              <button type="button" data-pet-action="sleep" aria-pressed="false">睡觉</button>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section download-section page-width" id="download" aria-labelledby="download-title">
+        <div class="section-heading">
+          <h2 id="download-title" data-reveal="rise">从这里开始使用 YouYu</h2>
+          <p data-reveal="rise">
+            当前版本 <span data-release-version>1.8.12</span>，适用于 Windows 10 / 11
+            x64。两种版本都支持小白与专业模式，公开安装包不内置订阅。
+          </p>
+        </div>
+        <div class="download-fields">
+          <article class="download-option" data-reveal="rise">
+            <h3>标准版</h3>
+            <p>代理、节点、测试与修复功能齐全，附带可互动的桌宠。<br class="wide-break" />首次使用可选这一版。</p>
+            <a class="button" href="https://github.com/qianhou0627/TIZI/releases/download/v1.8.12/YouYu-1.8.12-x64.exe"
+              >下载标准版</a
+            >
+          </article>
+          <article class="download-option no-pet-option" data-reveal="rise">
+            <h3>无桌宠版</h3>
+            <p>保留相同的网络功能，不包含桌宠素材与窗口。使用独立更新通道。</p>
+            <a
+              class="button"
+              href="https://github.com/qianhou0627/TIZI/releases/download/v1.8.12/YouYu-1.8.12-x64-no.exe"
+              >下载无桌宠版</a
+            >
+          </article>
+        </div>
+        <div class="download-details">
+          <p>
+            <a href="https://github.com/qianhou0627/TIZI/releases/tag/v1.8.12">更新说明与校验清单</a> /
+            <a href="guide.html">安装与使用指南</a> / <a href="download.html">完整下载说明</a>
+          </p>
+        </div>
+        <div class="install-guide" data-reveal="rise">
+          <h3>安装后，三步开始</h3>
+          <ol>
+            <li>
+              <span>安装软件</span>
+              <p>运行安装包，完成管理员授权。</p>
+            </li>
+            <li>
+              <span>登记与订阅</span>
+              <p>完成使用登记，在设置中保存自己的订阅。</p>
+            </li>
+            <li>
+              <span>启动代理</span>
+              <p>日常用小白模式启停，需要时进入专业模式调整。</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section faq page-width" id="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title" data-reveal="rise">常见问题</h2>
+        <dl>
+          <div data-reveal="rise">
+            <dt>小白模式和专业模式要分别下载吗？</dt>
+            <dd>
+              不用。标准版和无桌宠版都包含这两种模式，区别只在于是否包含桌宠。小白模式保留启停和状态反馈，专业模式提供节点、规则、TUN、测试与诊断等完整功能。
+            </dd>
+          </div>
+          <div data-reveal="rise">
+            <dt>安装后怎么开始？</dt>
+            <dd>
+              运行安装包并完成使用登记，在设置中保存自己的订阅，然后启动代理。安装需要管理员授权，日常运行使用普通用户权限。
+            </dd>
+          </div>
+          <div data-reveal="rise">
+            <dt>停止后仍无法联网？</dt>
+            <dd>
+              先在设置中执行“修复”，清理系统代理、WinHTTP 和 DNS 缓存。需要重建整个应用进程时，再使用托盘的“网络修复”。
+            </dd>
+          </div>
+          <div data-reveal="rise">
+            <dt>版本会自动更新吗？</dt>
+            <dd>
+              支持在应用内检查、下载、校验并安装更新，标准版和无桌宠版分别更新。旧版无法完成更新时，可从本页下载安装包覆盖安装。
+            </dd>
+          </div>
+          <div data-reveal="rise">
+            <dt>安装时遇到 Windows 提示怎么办？</dt>
+            <dd>
+              当前安装包尚未配置生产代码签名。请从本页链接的官方 GitHub Release 下载，确认来源后再按 Windows 提示操作。
+            </dd>
+          </div>
+          <div data-reveal="rise">
+            <dt>如何贡献或报告问题？</dt>
+            <dd>
+              一般问题与改进建议可在
+              <a href="https://github.com/qianhou0627/TIZI/issues">GitHub Issues</a> 提交。安全问题请按<a
+                href="https://github.com/qianhou0627/TIZI/blob/main/SECURITY.md"
+                >安全策略</a
+              >私下报告，避免公开订阅和凭据。
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-width">
+        <div class="footer-links">
+          <p><span class="footer-brand">YouYu</span> · 118 Studio<br />Windows Mihomo 桌面客户端</p>
+          <div>
+            <a href="guide.html">使用指南</a><a href="changelog.html">更新记录</a
+            ><a href="https://github.com/qianhou0627/TIZI">GitHub</a
+            ><a href="https://github.com/qianhou0627/TIZI/blob/main/LICENSE">MIT 许可</a
+            ><a href="https://github.com/qianhou0627/TIZI/blob/main/SECURITY.md">安全策略</a><a href="#top">返回顶部</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

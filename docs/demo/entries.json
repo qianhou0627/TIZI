@@ -1,0 +1,77 @@
+{
+  "../src/renderer/assets/pet/youyu/extra-spritesheet.webp": {
+    "file": "assets/extra-spritesheet-BsDP_gbH.webp",
+    "src": "../src/renderer/assets/pet/youyu/extra-spritesheet.webp"
+  },
+  "../src/renderer/assets/pet/youyu/main-spritesheet.webp": {
+    "file": "assets/main-spritesheet-BsdxAAmx.webp",
+    "src": "../src/renderer/assets/pet/youyu/main-spritesheet.webp"
+  },
+  "../src/renderer/assets/youyu-icon.png": {
+    "file": "assets/youyu-icon-Bj1kyXHr.png",
+    "src": "../src/renderer/assets/youyu-icon.png"
+  },
+  "../src/renderer/pages/PetPreviewPage.tsx": {
+    "file": "assets/PetPreviewPage-Bly23q8H.js",
+    "name": "PetPreviewPage",
+    "src": "../src/renderer/pages/PetPreviewPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-CMY55oh2.js",
+      "_pet-sprite--79Mbtcy.js",
+      "_index-CsZl8sT9.js",
+      "_devApi-BP3TDSc7.js"
+    ]
+  },
+  "_devApi-BP3TDSc7.js": {
+    "file": "assets/devApi-BP3TDSc7.js",
+    "name": "devApi"
+  },
+  "_index-C16RaqWn.css": {
+    "file": "assets/index-C16RaqWn.css",
+    "src": "_index-C16RaqWn.css"
+  },
+  "_index-CsZl8sT9.js": {
+    "file": "assets/index-CsZl8sT9.js",
+    "name": "index",
+    "imports": [
+      "_react-CMY55oh2.js",
+      "_devApi-BP3TDSc7.js"
+    ],
+    "dynamicImports": [
+      "../src/renderer/pages/PetPreviewPage.tsx"
+    ],
+    "css": [
+      "assets/index-C16RaqWn.css"
+    ],
+    "assets": [
+      "assets/youyu-icon-Bj1kyXHr.png"
+    ]
+  },
+  "_pet-sprite--79Mbtcy.js": {
+    "file": "assets/pet-sprite--79Mbtcy.js",
+    "name": "pet-sprite",
+    "imports": [
+      "_react-CMY55oh2.js"
+    ],
+    "assets": [
+      "assets/main-spritesheet-BsdxAAmx.webp",
+      "assets/extra-spritesheet-BsDP_gbH.webp"
+    ]
+  },
+  "_react-CMY55oh2.js": {
+    "file": "assets/react-CMY55oh2.js",
+    "name": "react"
+  },
+  "pet.tsx": {
+    "file": "assets/pet-DjHIawON.js",
+    "name": "pet",
+    "src": "pet.tsx",
+    "isEntry": true,
+    "imports": [
+      "_react-CMY55oh2.js",
+      "_pet-sprite--79Mbtcy.js",
+      "_devApi-BP3TDSc7.js"
+    ]
+  }
+}
