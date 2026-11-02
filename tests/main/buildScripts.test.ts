@@ -105,5 +105,11 @@ describe('Windows build scripts', () => {
     expect(source).not.toContain('team-builds');
     expect(source).not.toContain('refreshTeamBuilds');
     expect(source).toContain("await run('node', ['scripts/archive-windows-release.mjs']);");
+    expect(source.match(/\['run', 'assets'\]/g)).toHaveLength(1);
+    expect(source.match(/\['run', 'cache:electron:win'\]/g)).toHaveLength(1);
+    expect(source).not.toContain("['run', 'dist:win']");
+    for (const validation of ['validate:release:no:public', 'validate:release:in:public', 'validate:release']) {
+      expect(source).toContain(`['run', '${validation}']`);
+    }
   });
 });

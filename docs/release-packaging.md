@@ -31,7 +31,7 @@ Windows x64 安装包按交付对象分成两个互不混用的流程：
 
 `npm run dist:win`、`npm run dist:win:in`、`npm run dist:win:no` 仍保留给单通道排查，不是日常团队交付入口。公开 GitHub release、GitHub Actions artifact 和公开下载渠道只能上传不含内置订阅的产物。标准版使用 `latest.yml` 更新；内部通道和无桌宠通道只能上传 `--public-update` 生成的更新包，分别使用 `latest-in.yml` 和 `latest-no.yml`。
 
-纯文档、项目规则或归档目录维护不需要递增版本号，也不需要重新打安装包。
+纯文档、项目规则、发布工具或归档目录维护，只要不改变应用代码和资源，就不需要递增应用版本号或发布新安装包。
 
 ## 订阅文件
 
@@ -217,7 +217,7 @@ release/YouYu-<version>-x64-no.exe
 
 打包前先确认 `package.json` 的 `version`。
 
-每次发布新版本必须同时更新 README 与介绍网页 `https://fishknowsss.github.io/YouYu/`。先写入 `CHANGELOG.md` 的当前版本说明和 README「近期改进」，再运行 `npm run site:build`：该命令会同步 README 当前版本及下载链接、官网版本文字、下载入口、结构化数据、更新记录和交互演示。`validate:repo` 会检查同步结果；发布后等待 GitHub Pages 部署完成，核对线上主页、下载页和更新记录均为本次版本。
+每次发布新版本必须同时更新 README 与介绍网页 `https://qianhou0627.github.io/TIZI/`。先写入 `CHANGELOG.md` 的当前版本说明，再运行 `npm run site:build`：该命令会同步 README 当前版本及下载链接、官网版本文字、下载入口、结构化数据、更新记录和交互演示。`validate:repo` 会检查同步结果；发布后等待 GitHub Pages 部署完成，核对线上主页、下载页和更新记录均为本次版本。
 
 - 小修小改递增 patch，例如 `0.7.7` -> `0.7.8`。
 - 较大功能或行为变化递增 minor，例如 `0.7.x` -> `0.8.0`。
@@ -287,42 +287,21 @@ npm run dist:win:no 生成的 release/YouYu-<version>-x64-no.exe
 
    只提交本次源码、文档、版本号和测试改动。不要提交 `release/`、`release-archive/`、`team-builds/`、遗留的 `local-subscription-builds/`、`out/`、`resources/generated/` 或本机私有订阅文件。
 
-2. 运行本地验证。
+2. 运行与改动相关的本地检查。
 
-   ```powershell
-   npm run release:network:preflight
-   npm run validate:repo
-   npm run validate:mihomo
-   npm run typecheck
-   npm run test:window
-   npm test
-   npm run test:worker
-   npm run typecheck:worker
-   npm run build:worker
-   npm run lint
-   npm run format:check
-   npm run build
-   ```
+   本地运行 `npm run validate:repo`、必要的聚焦回归及 UI 视觉检查。全套类型检查、真实窗口、完整测试/覆盖率、Worker 测试/类型/构建、lint、格式和应用构建统一由同一 SHA 的 Validate 执行一次，不在本地和标签工作流重复整套执行。需要快速定位失败时仍可运行对应本地命令。
 
    更新器或安装器的 Windows PowerShell 5.1 代码有改动时，相关真实 PowerShell 测试只能作为快速反馈，不能替代上面的完整本地 `npm test`，本地仍保留 Vitest 默认文件并行。Actions 的通用测试阶段同样保持默认文件并行，随后以独立、无重试且不放宽原测试时限的阶段运行重型 updater 进程边界文件；生产中的 Node、NSIS 或其他中间进程启动 5.1 前，必须大小写无关地移除父进程继承的 `PSModulePath` 和 `PSModuleAnalysisCachePath`，让 5.1 重建原生模块路径并使用原生缓存。Actions 的 Test 步骤必须从 `cmd` 启动并显式丢弃模块路径；重复真实脚本夹具只可复用 runner 已提供且确实存在的绝对、非 `NUL` 分析缓存文件，单元、进程启动契约和轻量污染父环境真实子进程共同证明生产路径清除两项设置，另由复用可信缓存的污染模块路径测试确认 5.1 仍从 `$PSHOME` 解析系统模块。不得通过硬编码模块目录、禁用或自行预热缓存、放宽超时、失败重试或 `--no-file-parallelism` 掩盖故障。若只在干净 runner 失败，应按真实产品兼容问题处理，先减少重复夹具启动或收紧进程隔离，再继续发布。
 
    如果改动包含 UI，必须额外做关键尺寸或关键页面验证。优先覆盖最小窗口、断点附近窗口和本次改动页面；可以使用截图、DOM 快照或等价的可重复检查，并在最终说明中写明验证过的尺寸和页面。
 
-3. 生成并留存本地私有双包，再生成公开更新资产。
+3. 公开安装包只在标签的 Build Windows runner 构建一次。
 
-   先生成带订阅的 `-in`、`-no` 团队私有双包：
+   默认不先在本机运行 `dist:win:release`。该步骤在下面第 7 步精确标签构建时执行；工作流会先核验 GitHub 上该 SHA 最新的 main Validate 已成功，再调用 `npm run dist:win:release`。没有记录、错误 SHA、其他 workflow/分支/仓库、PR 验证、失败或尚未完成的最新运行均会阻止打包，不能回退使用更早绿灯。
 
-   ```powershell
-   npm run dist:win:team
-   ```
+   标签构建不再重复执行完整测试、Worker 检查、lint、格式或真实窗口；仍保留打包输入完整性、标签版本、每个通道安装包/空订阅/运行时校验、smoke、SHA256 和 provenance。
 
-   该命令会分别构建和校验两个私有通道，在 `smoke` 成功后从私有临时产物原子刷新 `team-builds/`，然后清理 `release/`。确认两个 EXE 的内置订阅与 `resources/default-subscription.in.txt` 一致，并确认目录中没有标准版、版本子目录或 `.blockmap`。后续公开打包会重新创建 `release/`，但不得改写 `team-builds/`。
-
-   再生成三通道公开更新资产：
-
-   ```powershell
-   npm run dist:win:release
-   ```
+   只有用户明确需要本地公开包或排查打包失败时才在本地运行 `npm run dist:win:release`。私有团队交付另行按需运行 `npm run dist:win:team`，与公开发布独立，不是每次公开发布的前置条件，且不能上传私有双包。
 
    该命令必须成功，并生成三通道公开更新资产：
 
@@ -342,11 +321,11 @@ npm run dist:win:no 生成的 release/YouYu-<version>-x64-no.exe
 
    `dist:win:release` 内部会运行对应校验和 `smoke`，并在三通道安装包完成后下载、固定校验 Mihomo 对应源码归档，最后原子生成并复核 `SHA256SUMS.txt`。如果它失败，先修复失败原因，不要上传部分产物。
 
-4. 复核本地归档。
+4. 在第 9 步下载并验证成功 runner 产物后，复核本地归档。
 
    `dist:win:release` 在包含 `SHA256SUMS.txt` 在内的 11 个公开资产全部验证通过后，才会把它们原名复制到 `release-archive/<version>/`，并以本次版本为锚点，只删除超出“当前版本加前两个版本”的纯语义版本目录。归档脚本不会处理其他名称的历史文件或目录；若发现高于本次版本的目录则先失败且不做删除。确认当前版本目录恰好包含 11 个文件，且可再次通过 `release-sha256-manifest.mjs --verify`；旧的扁平归档可在内容确认后逐步迁移，不得为了整理而猜测或补造缺失资产。
 
-   确认扁平 `team-builds/` 已在公开打包前留存当前版本的私有 `-in`、`-no` 两个 EXE。不要从当前公开 `release/` 重新覆盖该目录；它不包含标准版、`.blockmap` 或历史版本，也不上传 GitHub。
+   仅在另行交付私有双包时核对 `team-builds/`；公开发布不要求生成该目录，不能从公开 `release/` 覆盖它。
 
 5. 提交源码改动。
 
@@ -367,7 +346,7 @@ npm run dist:win:no 生成的 release/YouYu-<version>-x64-no.exe
    gh run watch <上一步返回的 databaseId> --exit-status
    ```
 
-   推送后立即检查，不要等到上传 Release 时才发现失败。必须确认 `Validate` 的 `headSha` 等于本次 `$commit` 且结论为 `success`；本地测试全绿不能替代 GitHub 新鲜 Windows runner。若失败，立即停止标签和 Release，运行 `gh run view <run-id> --log-failed` 获取失败步骤，修复、重新提交并推送后，从本步骤重新验证。若 workflow 尚未出现在列表中，只做有界轮询，不得误用上一提交的绿色结果。
+   推送后立即检查，不要等到上传 Release 时才发现失败。Build Windows 通过 scripts/verify-release-validation.mjs 再次读取同一 SHA 最新 main Validate 记录，复用其成功证据，不重复测试。必须确认 `Validate` 的 `headSha` 等于本次 `$commit` 且结论为 `success`；本地测试全绿不能替代 GitHub 新鲜 Windows runner。若失败，立即停止标签和 Release，运行 `gh run view <run-id> --log-failed` 获取失败步骤，修复、重新提交并推送后，从本步骤重新验证。若 workflow 尚未出现在列表中，只做有界轮询，不得误用上一提交的绿色结果。
 
 7. 创建并推送版本标签，再等待标签构建。
 
@@ -441,3 +420,12 @@ npm run dist:win:no 生成的 release/YouYu-<version>-x64-no.exe
 当前发布目标为 `qianhou0627/TIZI`。空仓库没有 latest Release，首次发布的 CDN 预检可在当前发布终端显式设置 `YOUYU_RELEASE_PREFLIGHT_REPOSITORY=fishknowsss/YouYu`，用原项目已有的公开标准安装包探测同一 GitHub CDN 路由。此选项仅改变预检样本，不能改变 TIZI 的发布仓库、客户端更新源或远端资产核验目标。首个 TIZI Release 完成后移除此选项，恢复对 TIZI 自身安装包预检。
 
 本地完整测试使用 Node 24.22.1 或更新的 Node 24；24.0.1 缺少测试所需的 TLS CA 接口。真实窗口和进程边界检查遇到沙箱权限错误时，申请正常系统权限重新验证，不关闭 Electron 沙箱或放宽测试。
+
+
+## 公开发布耗时优化
+
+- 完整验证由 main 的 Validate 执行一次，标签只核验同一 SHA 的最新成功记录。
+- 公开三通道只由 runner 构建一次，本地留存直接使用验证过的 runner 资产；只有明确本地交付或诊断才额外打包。
+- 三通道共享一次品牌资源生成和 Electron 缓存准备；每次 electron-builder 启动前仍独立核验 Electron ZIP 哈希。各通道仍分别编译并校验，不复用错误通道的输出。
+- dist:win:release 内部已有 smoke，工作流不再次执行相同 smoke。签名、订阅隔离、安装包、源码、SHA256、provenance、远端 11 项资产与三个更新通道门禁保持不变。
+- README 不再维护“近期改进”，版本历史只维护 CHANGELOG 并同步网站；README 当前版本和下载入口继续自动同步。

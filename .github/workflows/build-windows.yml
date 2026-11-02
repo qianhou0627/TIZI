@@ -31,6 +31,11 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Verify validated commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/verify-release-validation.mjs
+
       - name: Setup Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
@@ -55,48 +60,6 @@ jobs:
           restore-keys: |
             electron-builder-${{ runner.os }}-
 
-      - name: Test
-        # Avoid a PowerShell 7 module path while retaining the runner's prewarmed PS5 analysis cache.
-        # Spawn contracts and a lightweight real child prove production still scrubs both settings.
-        shell: cmd
-        run: |
-          if not defined PSModuleAnalysisCachePath (
-            echo ERROR: GitHub runner PS5 analysis cache is unavailable.
-            exit /b 1
-          )
-          if /I "%PSModuleAnalysisCachePath%"=="NUL" (
-            echo ERROR: GitHub runner PS5 analysis cache is disabled.
-            exit /b 1
-          )
-          if not exist "%PSModuleAnalysisCachePath%" (
-            echo ERROR: GitHub runner PS5 analysis cache file does not exist.
-            exit /b 1
-          )
-          set "PSModulePath="
-          node node_modules\vitest\vitest.mjs run --exclude tests/main/updateInstallerLauncher.test.ts --exclude tests/main/manageInstalledProcessScript.test.ts --exclude tests/main/elevatedProcess.test.ts
-          if errorlevel 1 exit /b 1
-          node node_modules\vitest\vitest.mjs run tests/main/elevatedProcess.test.ts
-          if errorlevel 1 exit /b 1
-          node node_modules\vitest\vitest.mjs run tests/main/manageInstalledProcessScript.test.ts
-          if errorlevel 1 exit /b 1
-          node node_modules\vitest\vitest.mjs run tests/main/updateInstallerLauncher.test.ts
-          if errorlevel 1 exit /b 1
-
-      - name: Test Worker maintenance
-        run: npm run test:worker
-
-      - name: Typecheck Worker
-        run: npm run typecheck:worker
-
-      - name: Build Worker
-        run: npm run build:worker
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Verify real Electron startup layout
-        run: npm run test:window
-
       - name: Verify release tag
         if: startsWith(github.ref, 'refs/tags/')
         shell: pwsh
@@ -107,17 +70,8 @@ jobs:
             throw "Tag $env:GITHUB_REF_NAME does not match package version $expected"
           }
 
-      - name: Lint
-        run: npm run lint --if-present
-
-      - name: Check formatting
-        run: npm run format:check --if-present
-
       - name: Build update installers
         run: npm run dist:win:release
-
-      - name: Smoke packaged output
-        run: npm run smoke
 
       - name: Read package version
         id: package

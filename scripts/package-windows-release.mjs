@@ -17,21 +17,23 @@ const archive = await mkdtemp(join(tmpdir(), `youyu-release-${version}-`));
 try {
   await run('npm', ['run', 'clean:release']);
   await run('npm', ['run', 'assets']);
+  await run('npm', ['run', 'cache:electron:win']);
 
   await run('npm', ['run', 'build:no-pet']);
-  await run('npm', ['run', 'cache:electron:win']);
   await run('node', ['scripts/run-electron-builder.mjs', '--no-pet', '--public-update']);
   await run('npm', ['run', 'validate:release:no:public']);
   await keep([`YouYu-${version}-x64-no.exe`, `YouYu-${version}-x64-no.exe.blockmap`, 'latest-no.yml']);
 
   await run('npm', ['run', 'clean:release']);
   await run('npm', ['run', 'build:in']);
-  await run('npm', ['run', 'cache:electron:win']);
   await run('node', ['scripts/run-electron-builder.mjs', '--internal', '--public-update']);
   await run('npm', ['run', 'validate:release:in:public']);
   await keep([`YouYu-${version}-x64-in.exe`, `YouYu-${version}-x64-in.exe.blockmap`, 'latest-in.yml']);
 
-  await run('npm', ['run', 'dist:win']);
+  await run('npm', ['run', 'clean:release']);
+  await run('npm', ['run', 'build']);
+  await run('node', ['scripts/run-electron-builder.mjs']);
+  await run('npm', ['run', 'validate:release']);
   await restore([
     `YouYu-${version}-x64-no.exe`,
     `YouYu-${version}-x64-no.exe.blockmap`,

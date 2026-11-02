@@ -43,6 +43,31 @@ function stepIndex(steps: WorkflowStep[], name: string) {
 }
 
 describe('critical CI workflows', () => {
+  it('gates packaging on exact-commit Validate evidence without repeating its checks', async () => {
+    const workflow = await loadWorkflow('build-windows.yml');
+    const steps = jobSteps(workflowJob(workflow, 'build'), 'build');
+    const gate = findStep(steps, 'Verify validated commit');
+    expect(gate.run).toBe('node scripts/verify-release-validation.mjs');
+    expect(asRecord(gate.env, 'validation gate env').GH_TOKEN).toBe('${{ github.token }}');
+    expect(gate.if).toBeUndefined();
+    expect(gate['continue-on-error']).toBeUndefined();
+    expect(stepIndex(steps, 'Verify validated commit')).toBeLessThan(stepIndex(steps, 'Install'));
+    for (const duplicate of [
+      'Test',
+      'Test Worker maintenance',
+      'Typecheck',
+      'Verify real Electron startup layout',
+      'Lint',
+      'Check formatting',
+      'Smoke packaged output'
+    ]) {
+      expect(
+        steps.some((step) => step.name === duplicate),
+        duplicate
+      ).toBe(false);
+    }
+    expect(findStep(steps, 'Build update installers').run).toBe('npm run dist:win:release');
+  });
   it('defines a reproducible critical-domain coverage artifact with moderate global thresholds', async () => {
     const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as {
       scripts?: Record<string, string>;
