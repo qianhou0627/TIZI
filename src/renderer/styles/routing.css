@@ -343,7 +343,7 @@
   color: var(--accent-strong);
   font-weight: 700;
 }
-.node-routing-toolbar > .rule-picker .rule-picker-trigger {
+.node-routing-toolbar .node-selection-controls > .rule-picker .rule-picker-trigger {
   background: var(--accent-soft);
   color: var(--accent-strong);
   border: 0;

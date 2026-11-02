@@ -16,6 +16,7 @@ describe('renderer page render keys', () => {
       })
     ).toBe(baseKey);
     expect(getNodeSelectRenderKey({ ...snapshot, currentNode: '另一个节点' })).not.toBe(baseKey);
+    expect(getNodeSelectRenderKey({ ...snapshot, strategy: 'manual' })).not.toBe(baseKey);
     expect(
       getNodeSelectRenderKey({
         ...snapshot,

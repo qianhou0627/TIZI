@@ -87,8 +87,6 @@ export function App() {
             onStop={controller.stop}
             onRepair={controller.repair}
             onModeChange={controller.setMode}
-            onStrategyChange={controller.selectStrategy}
-            onOpenNodes={controller.openNodes}
             onUsageModeChange={controller.changeUsageMode}
             onCheckUpdate={controller.checkForUpdates}
             onInstallUpdate={controller.installUpdate}
@@ -106,6 +104,7 @@ export function App() {
             onTestAll={controller.testAllNodes}
             onCancelTestAll={controller.cancelNodeTests}
             onRefresh={controller.updateSubscription}
+            onStrategyChange={controller.selectStrategy}
             onRuleProfileChange={(ruleProfile) => {
               void controller.saveSettings({ ruleProfile });
             }}

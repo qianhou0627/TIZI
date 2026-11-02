@@ -12,21 +12,16 @@
   }
 
   .connection-card {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 404px);
+    grid-template-columns: minmax(0, 1fr) 128px;
     gap: 10px;
     padding: 14px;
   }
 
   .connection-actions {
-    grid-template-columns: 146px 108px minmax(0, 128px);
+    grid-template-columns: minmax(0, 1fr);
     gap: 7px;
   }
 
-  .node-mode-toggle {
-    height: 38px;
-  }
-
-  .node-health-metric,
   .connection-actions .power-button {
     height: 38px;
   }

@@ -770,8 +770,7 @@ describe('easy home connection feedback', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -799,8 +798,7 @@ describe('easy home connection feedback', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -840,8 +838,7 @@ describe('easy home connection feedback', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -872,8 +869,7 @@ describe('easy home connection feedback', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -906,8 +902,7 @@ describe('advanced home diagnostics', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -935,8 +930,7 @@ describe('advanced home diagnostics', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -958,8 +952,7 @@ describe('advanced home diagnostics', () => {
         onStop={vi.fn()}
         onRepair={vi.fn()}
         onModeChange={vi.fn()}
-        onStrategyChange={vi.fn()}
-        onOpenNodes={vi.fn()}
+
         onUsageModeChange={vi.fn()}
         onInstallUpdate={vi.fn()}
       />
@@ -1004,15 +997,16 @@ describe('advanced home diagnostics', () => {
       onStop: vi.fn(),
       onRepair: vi.fn(),
       onModeChange: vi.fn(),
-      onStrategyChange: vi.fn(),
-      onOpenNodes: vi.fn(),
+
       onUsageModeChange: vi.fn(),
       onInstallUpdate: vi.fn()
     };
 
     await act(async () => root?.render(<Home {...props} />));
     expect(container.querySelector('.mode-strip button[aria-pressed="true"]')?.textContent).toBe('规则');
-    expect(container.querySelector('.node-mode-toggle button[aria-pressed="true"]')?.textContent).toBe('自动');
+    expect(container.querySelector('.node-mode-toggle')).toBeNull();
+    expect(container.querySelector('.connection-health')).toBeNull();
+    expect(container.querySelector('.connection-identity h2')?.textContent).toBe('规则自动选择');
     const log = container.querySelector<HTMLDivElement>('.diagnostics-log')!;
     Object.defineProperty(log, 'scrollHeight', { configurable: true, value: 240 });
 
@@ -1068,8 +1062,7 @@ describe('advanced home diagnostics', () => {
           onStop={vi.fn()}
           onRepair={vi.fn()}
           onModeChange={vi.fn()}
-          onStrategyChange={vi.fn()}
-          onOpenNodes={vi.fn()}
+
           onUsageModeChange={vi.fn()}
           onInstallUpdate={vi.fn()}
         />

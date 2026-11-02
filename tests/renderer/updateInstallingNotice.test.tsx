@@ -448,8 +448,7 @@ function createHomeProps(snapshot: AppSnapshot) {
     onStop: () => undefined,
     onRepair: () => undefined,
     onModeChange: () => undefined,
-    onStrategyChange: () => undefined,
-    onOpenNodes: () => undefined,
+
     onUsageModeChange: () => undefined,
     onCheckUpdate: () => undefined,
     onInstallUpdate: () => undefined

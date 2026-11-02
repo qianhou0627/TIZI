@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import type { AppSnapshot, MihomoMode, StrategyKey } from '../../shared/ipc';
+import type { AppSnapshot, MihomoMode } from '../../shared/ipc';
 import { updateInstallingMessage } from '../../shared/updateProgress';
 import type { UsageMode } from '../components/AppShell';
 import { BrandMark } from '../components/BrandMark';
 import { DashboardPanel } from '../components/DashboardPanel';
+import { currentNodeLabel } from '../nodePresentation';
 import { PowerButton } from '../components/PowerButton';
 import { WorkspaceHeader } from '../components/WorkspaceHeader';
 import { isActionErrorMessage, isActionNoticeMessage } from '../actionMessages';
@@ -20,8 +21,6 @@ type HomeProps = {
   onStop: () => void;
   onRepair: () => void;
   onModeChange: (mode: MihomoMode) => void;
-  onStrategyChange: (strategy: StrategyKey) => void;
-  onOpenNodes: () => void;
   onUsageModeChange: (mode: UsageMode) => void;
   onCheckUpdate?: () => void;
   onInstallUpdate: () => void;
@@ -349,29 +348,10 @@ function AdvancedHome(props: HomeProps) {
           <div className="connection-identity">
             <div>
               <span>当前节点</span>
-              <h2 title={props.snapshot.currentNode}>{props.snapshot.currentNode}</h2>
+              <h2 title={currentNodeLabel(props.snapshot)}>{currentNodeLabel(props.snapshot)}</h2>
             </div>
           </div>
           <div className="connection-actions">
-            <NodeHealth snapshot={props.snapshot} />
-            <div className="node-mode-toggle" aria-label="节点方式">
-              <button
-                className={props.snapshot.strategy === 'manual' ? 'active' : ''}
-                aria-pressed={props.snapshot.strategy === 'manual'}
-                disabled={props.busy}
-                onClick={props.onOpenNodes}
-              >
-                手动
-              </button>
-              <button
-                className={props.snapshot.strategy !== 'manual' ? 'active' : ''}
-                aria-pressed={props.snapshot.strategy !== 'manual'}
-                disabled={props.busy}
-                onClick={() => props.onStrategyChange('auto')}
-              >
-                自动
-              </button>
-            </div>
             <PowerButton
               status={props.snapshot.status}
               busy={props.busy}
@@ -471,46 +451,6 @@ function RuntimeMetric({
   );
 }
 
-function NodeHealth({ snapshot }: { snapshot: AppSnapshot }) {
-  const health = snapshot.nodeHealth;
-  if (snapshot.status !== 'running') {
-    return (
-      <div className="connection-health connection-health-single" aria-label="节点状态 未连接">
-        <div className="node-health-metric node-health-summary is-muted">
-          <strong>未连接</strong>
-        </div>
-      </div>
-    );
-  }
-
-  if (health.delayStatus === 'untested' && health.availability.status === 'untested') {
-    return (
-      <div className="connection-health connection-health-single" aria-label="节点状态 检测中">
-        <div className="node-health-metric node-health-summary is-testing">
-          <strong>检测中</strong>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="connection-health" aria-label="节点状态">
-      <div
-        className={`node-health-metric ${getDelayToneClass(health.delay, health.delayStatus)}`}
-        aria-label={`延迟 ${formatDelay(health)}`}
-      >
-        <strong>{formatDelay(health)}</strong>
-      </div>
-      <div
-        className={`node-health-metric ${getAvailabilityToneClass(health.availability)}`}
-        aria-label={`可用度 ${formatAvailability(health.availability)}`}
-      >
-        <strong>{formatAvailability(health.availability)}</strong>
-      </div>
-    </div>
-  );
-}
-
 function getStatusLabel(status: AppSnapshot['status']): string {
   if (status === 'running') return '运行中';
   if (status === 'failed') return '异常';
@@ -540,22 +480,6 @@ function formatDuration(durationMs: number): string {
   return '不足1分钟';
 }
 
-function formatDelay(health: AppSnapshot['nodeHealth']): string {
-  if (health.delayStatus === 'testing') return '测试中';
-  if (health.delayStatus === 'failed') return '失败';
-  if (typeof health.delay === 'number') return `${health.delay} ms`;
-  return '未测';
-}
-
-function formatAvailability(availability: AppSnapshot['nodeHealth']['availability']): string {
-  if (availability.status === 'testing') return '测试中';
-  if (availability.status === 'failed') return '失败';
-  if (availability.tone === 'danger') return '不良';
-  if (availability.tone === 'warning') return '一般';
-  if (availability.tone === 'success') return '优秀';
-  return '未测';
-}
-
 function getDisplayUpdateProgress(update: AppSnapshot['update']): number {
   if (typeof update.percent !== 'number') return 0;
   return Math.max(0, Math.min(100, Math.round(update.percent)));
@@ -567,22 +491,4 @@ function formatUpdateTransfer(update: AppSnapshot['update']): string {
     return typeof update.percent === 'number' ? `${Math.round(update.percent)}%` : '准备下载';
   }
   return `${formatBytes(update.transferredBytes)} / ${formatBytes(update.totalBytes)}`;
-}
-
-function getDelayToneClass(delay: number | undefined, status: AppSnapshot['nodeHealth']['delayStatus']): string {
-  if (status === 'testing') return 'is-testing';
-  if (status === 'failed') return 'is-danger';
-  if (typeof delay !== 'number') return 'is-muted';
-  if (delay <= 120) return 'is-success';
-  if (delay <= 260) return 'is-warning';
-  return 'is-danger';
-}
-
-function getAvailabilityToneClass(availability: AppSnapshot['nodeHealth']['availability']): string {
-  if (availability.status === 'testing') return 'is-testing';
-  if (availability.status === 'failed') return 'is-danger';
-  if (availability.tone === 'success') return 'is-success';
-  if (availability.tone === 'warning') return 'is-warning';
-  if (availability.tone === 'danger') return 'is-danger';
-  return 'is-muted';
 }
