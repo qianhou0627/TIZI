@@ -9,7 +9,6 @@ import {
   windowsJobNativeTypePowerShell
 } from '../../src/main/platform/windowsJobProcess';
 import {
-  createWindowsPowerShellEnvironment,
   resolveWindowsPowerShellPath,
   windowsPowerShellModuleAnalysisCacheEnvironment
 } from '../../src/main/platform/windowsPowerShell';
@@ -96,7 +95,7 @@ describe('Windows Job Object process host', () => {
       resolveWindowsPowerShellPath(),
       ['-NoProfile', '-NonInteractive', '-Command', 'Invoke-Expression ([Console]::In.ReadToEnd())'],
       {
-        env: createWindowsPowerShellEnvironment(),
+        env: createWindowsPowerShellFixtureEnvironment(),
         encoding: 'utf8',
         input: source,
         windowsHide: true,
