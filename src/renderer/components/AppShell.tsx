@@ -1,4 +1,5 @@
 import { useRef, type ReactNode } from 'react';
+import { BrandMark } from './BrandMark';
 import { ThemePicker } from './ThemePicker';
 
 declare const __YOUYU_APP_VERSION__: string;
@@ -57,9 +58,10 @@ export function AppShell({
       {usageMode === 'advanced' && (
         <aside className="sidebar">
           <div className="brand-lockup">
+            <BrandMark size="sm" />
             <div className="brand-text">
-              <span>TIZI</span>
-              <strong>魔法</strong>
+              <span>YouYu</span>
+              <strong>有鱼</strong>
             </div>
           </div>
           <nav className="nav-list" aria-label="页面">

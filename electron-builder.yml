@@ -63,8 +63,8 @@ nsis:
   allowToChangeInstallationDirectory: false
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: TIZI
-  uninstallDisplayName: TIZI ${version}
+  shortcutName: YouYu
+  uninstallDisplayName: YouYu ${version}
   language: '2052'
   installerLanguages:
     - zh_CN

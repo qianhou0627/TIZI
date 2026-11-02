@@ -212,14 +212,14 @@ textarea:focus-visible {
 }
 
 .brand-text span {
-  color: #b83826;
-  font-size: 28px;
+  color: var(--ink);
+  font-size: var(--font-size-title-small);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-title-small);
 }
 
 .brand-text strong {
-  color: #b83826;
+  color: var(--accent);
   font-size: 13px;
   font-weight: var(--font-weight-bold);
 }
