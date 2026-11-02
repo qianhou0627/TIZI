@@ -20,8 +20,6 @@ jobs:
     timeout-minutes: 90
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      # Bootstrap the first release against an existing public CDN asset.
-      YOUYU_RELEASE_PREFLIGHT_REPOSITORY: fishknowsss/YouYu
 
     steps:
       - name: Checkout
