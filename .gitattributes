@@ -26,3 +26,7 @@
 *.bmp binary
 *.docx binary
 *.gz binary
+
+# Release manifests verify these upstream payloads byte for byte.
+resources/rulesets/** -text
+resources/mihomo/** -text

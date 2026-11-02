@@ -8,7 +8,7 @@
 
 YouYu 是一款面向 Windows x64 的 Mihomo 桌面客户端，提供代理启停、节点选择与健康检查、连通性测试、流量统计、系统网络修复、自动更新、桌宠交互和轻量云端管理。
 
-当前版本为 [`1.8.12`](https://github.com/qianhou0627/TIZI/releases/tag/v1.8.12)。[下载标准版](https://github.com/qianhou0627/TIZI/releases/download/v1.8.12/YouYu-1.8.12-x64.exe) · [下载无桌宠版](https://github.com/qianhou0627/TIZI/releases/download/v1.8.12/YouYu-1.8.12-x64-no.exe)。其他通道、更新文件和校验清单见 [最新稳定 Release](https://github.com/qianhou0627/TIZI/releases/latest)，版本演进见 [CHANGELOG](CHANGELOG.md)。
+当前版本为 [`1.8.13`](https://github.com/qianhou0627/TIZI/releases/tag/v1.8.13)。[下载标准版](https://github.com/qianhou0627/TIZI/releases/download/v1.8.13/YouYu-1.8.13-x64.exe) · [下载无桌宠版](https://github.com/qianhou0627/TIZI/releases/download/v1.8.13/YouYu-1.8.13-x64-no.exe)。其他通道、更新文件和校验清单见 [最新稳定 Release](https://github.com/qianhou0627/TIZI/releases/latest)，版本演进见 [CHANGELOG](CHANGELOG.md)。
 
 ## 近期改进
 
