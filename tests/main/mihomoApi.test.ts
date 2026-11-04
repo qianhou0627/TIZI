@@ -384,11 +384,11 @@ describe('createMihomoApiClient', () => {
               now: 'timeout-node',
               all: ['timeout-node']
             },
-            'timeout-node': { history: [{ delay: 2000 }] }
+            'timeout-node': { history: [{ delay: 5000 }] }
           }
         });
       }
-      return Response.json({ delay: 2000 });
+      return Response.json({ delay: 5000 });
     });
     const api = createMihomoApiClient({ secret: 'secret', fetcher });
 
@@ -770,7 +770,7 @@ describe('createMihomoApiClient', () => {
     await expect(api.testNodeDelay('香港 01')).resolves.toBe(87);
     expect(requestedUrls).toHaveLength(2);
     expect(requestedUrls[0]).toContain('/proxies/%E9%A6%99%E6%B8%AF%2001/delay');
-    expect(requestedUrls.every((url) => url.includes('timeout=2000'))).toBe(true);
+    expect(requestedUrls.every((url) => url.includes('timeout=5000'))).toBe(true);
     expect(decodeURIComponent(requestedUrls[0])).toContain('https://www.gstatic.com/generate_204');
     expect(decodeURIComponent(requestedUrls[1])).toContain('https://cp.cloudflare.com/generate_204');
   });
@@ -785,6 +785,15 @@ describe('createMihomoApiClient', () => {
     const url = new URL(String(fetcher.mock.calls[0][0]));
     expect(url.pathname).toBe('/proxies/manual-google-node/delay');
     expect(url.searchParams.get('url')).toBe('https://www.gstatic.com/generate_204');
+    expect(url.searchParams.get('timeout')).toBe('5000');
+  });
+
+  it('accepts a manual delay above the old timeout and rejects the new timeout boundary', async () => {
+    const fetcher = vi.fn(async () => Response.json({ delay: 2600 }));
+    const api = createMihomoApiClient({ secret: 'secret', fetcher });
+    await expect(api.testNodeDelay('slow-node', { profile: 'manual' })).resolves.toBe(2600);
+    fetcher.mockResolvedValueOnce(Response.json({ delay: 5000 }));
+    await expect(api.testNodeDelay('slow-node', { profile: 'manual' })).resolves.toBeUndefined();
   });
 
   it('keeps a complete background health score after a successful single-target manual test', async () => {
@@ -808,7 +817,7 @@ describe('createMihomoApiClient', () => {
         const name = decodeURIComponent(url.pathname.split('/')[2]);
         const failed =
           name === unavailable || (name === partial && url.searchParams.get('url')?.includes('cloudflare'));
-        return Response.json({ delay: failed ? 2000 : name === complete ? 120 : 50 });
+        return Response.json({ delay: failed ? 5000 : name === complete ? 120 : 50 });
       }
       selected = JSON.parse(String(init?.body ?? '{}')).name ?? selected;
       return new Response(null, { status: 204 });
@@ -1029,7 +1038,7 @@ describe('createMihomoApiClient', () => {
         });
       }
 
-      return Response.json({ delay: path.includes('cp.cloudflare.com') ? 2000 : 87 });
+      return Response.json({ delay: path.includes('cp.cloudflare.com') ? 5000 : 87 });
     });
     const api = createMihomoApiClient({ secret: 'secret', fetcher });
 
@@ -1212,7 +1221,7 @@ describe('createMihomoApiClient', () => {
     let selected = 'broken-node';
     const nodeNames = ['broken-node', 'slow-node', 'fast-node'];
     const delays: Record<string, number> = {
-      'broken-node': 2000,
+      'broken-node': 5000,
       'slow-node': 180,
       'fast-node': 72
     };
@@ -1233,7 +1242,7 @@ describe('createMihomoApiClient', () => {
 
       if (path.includes('/delay')) {
         const name = decodeURIComponent(path.match(/\/proxies\/([^/]+)\/delay/)?.[1] ?? '');
-        return Response.json({ delay: delays[name] ?? 2000 });
+        return Response.json({ delay: delays[name] ?? 5000 });
       }
 
       selected = JSON.parse(String(init?.body ?? '{}')).name ?? selected;
@@ -1268,7 +1277,7 @@ describe('createMihomoApiClient', () => {
       }
       if (path.includes('/delay')) {
         const name = decodeURIComponent(path.match(/\/proxies\/([^/]+)\/delay/)?.[1] ?? '');
-        return Response.json({ delay: delays[name] ?? 2000 });
+        return Response.json({ delay: delays[name] ?? 5000 });
       }
       selected = JSON.parse(String(init?.body ?? '{}')).name ?? selected;
       return new Response(null, { status: 204 });
@@ -1309,7 +1318,7 @@ describe('createMihomoApiClient', () => {
 
       if (path.includes('/delay')) {
         const name = decodeURIComponent(path.match(/\/proxies\/([^/]+)\/delay/)?.[1] ?? '');
-        return Response.json({ delay: delays[name] ?? 2000 });
+        return Response.json({ delay: delays[name] ?? 5000 });
       }
 
       selected = JSON.parse(String(init?.body ?? '{}')).name ?? selected;
@@ -1404,7 +1413,7 @@ describe('createMihomoApiClient', () => {
 
       if (path.includes('/delay')) {
         const name = decodeURIComponent(path.match(/\/proxies\/([^/]+)\/delay/)?.[1] ?? '');
-        return Response.json({ delay: delays[name] ?? 2000 });
+        return Response.json({ delay: delays[name] ?? 5000 });
       }
 
       const body = JSON.parse(String(init?.body ?? '{}'));

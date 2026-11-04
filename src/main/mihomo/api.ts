@@ -97,7 +97,7 @@ const delayTestTargets = [
   { target: 'gstatic-204', url: 'https://www.gstatic.com/generate_204' },
   { target: 'cloudflare-204', url: 'https://cp.cloudflare.com/generate_204' }
 ] as const;
-const delayTestTimeoutMs = 2000;
+const delayTestTimeoutMs = 5000;
 const delayTestConcurrency = 6;
 const manualDelayTestConcurrency = 32;
 const nodeDelayCache = new Map<string, number>();
